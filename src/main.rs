@@ -23,7 +23,9 @@ enum ImageProcessingOutput {
 #[derive(Deserialize)]
 pub struct ImageProcessingQuery {
     source: String,
+    #[serde(alias = "w")]
     width: Option<u32>,
+    #[serde(alias = "h")]
     height: Option<u32>,
     format: ImageProcessingOutput,
 }
@@ -31,7 +33,9 @@ pub struct ImageProcessingQuery {
 #[get("/")]
 async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
     let url = Url::parse(query.source.as_str()).expect("Invalid url!");
-    let original = fetching::fetch_dynimage(url).await.expect("Could not fetch image!");
+    let original = fetching::fetch_dynimage(url)
+        .await
+        .expect("Could not fetch image!");
 
     let result = optimizer::resize(&original.img, query.width, query.height);
 
@@ -44,7 +48,8 @@ async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
         ImageProcessingOutput::Gif => (image::ImageOutputFormat::Gif, ContentType(mime::IMAGE_GIF)),
     };
 
-    let bytes = optimizer::to_bytes(&result.img, format).expect("Could not export optimized image.");
+    let bytes =
+        optimizer::to_bytes(&result.img, format).expect("Could not export optimized image.");
     return HttpResponse::build(StatusCode::OK)
         .set(content_type)
         .body(bytes);

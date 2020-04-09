@@ -1,8 +1,10 @@
-pub const MAX_IMAGE_SIZE: u32 = 2 << 11; // 4096
 use image::DynamicImage;
-
+use num::clamp;
 use std::time::Instant;
+
 use crate::performance::Performance;
+
+pub const MAX_IMAGE_SIZE: u32 = 2 << 11; // 4096
 
 pub struct ResizeResponse {
   pub img: DynamicImage,
@@ -10,17 +12,20 @@ pub struct ResizeResponse {
 }
 
 pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
-    let start = Instant::now();
-    let resized = img.thumbnail(
-      width.unwrap_or(MAX_IMAGE_SIZE),
-      height.unwrap_or(MAX_IMAGE_SIZE),
-    );
-    ResizeResponse {
-      img: resized,
-      performance: Performance {
-        elapsed_ns: start.elapsed().as_nanos(),
-      }
-    }
+  let start = Instant::now();
+  let resized = if width.is_none() && height.is_none() {
+    img.clone()
+  } else {
+    let nwidth = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
+    let nheight = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
+    img.thumbnail(nwidth, nheight)
+  };
+  ResizeResponse {
+    img: resized,
+    performance: Performance {
+      elapsed_ns: start.elapsed().as_nanos(),
+    },
+  }
 }
 
 pub fn to_bytes(
