@@ -7,6 +7,7 @@ use url::Url;
 
 mod fetching;
 mod optimizer;
+mod performance;
 
 #[derive(Deserialize)]
 enum ImageProcessingOutput {
@@ -30,12 +31,9 @@ pub struct ImageProcessingQuery {
 #[get("/")]
 async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
     let url = Url::parse(query.source.as_str()).expect("Invalid url!");
-    let response = fetching::fetch_bytes(url)
-        .await
-        .expect("An error occurred when downloading the source image.");
-    let original = image::load_from_memory(&response.bytes).expect("Could not load image!");
+    let original = fetching::fetch_dynimage(url).await.expect("Could not fetch image!");
 
-    let optimized = optimizer::resize(&original, query.width, query.height);
+    let result = optimizer::resize(&original.img, query.width, query.height);
 
     let (format, content_type) = match &query.format {
         ImageProcessingOutput::Jpeg => (
@@ -46,7 +44,7 @@ async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
         ImageProcessingOutput::Gif => (image::ImageOutputFormat::Gif, ContentType(mime::IMAGE_GIF)),
     };
 
-    let bytes = optimizer::to_bytes(&optimized, format).expect("Could not export optimized image.");
+    let bytes = optimizer::to_bytes(&result.img, format).expect("Could not export optimized image.");
     return HttpResponse::build(StatusCode::OK)
         .set(content_type)
         .body(bytes);
