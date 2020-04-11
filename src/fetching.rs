@@ -2,6 +2,9 @@ use crate::performance::Performance;
 use std::time::Instant;
 use url::Url;
 
+/// The maximum allowed file size of the source image.
+pub const MAX_INPUT_SIZE: i32 = 2 << 25; // About 32 MiB.
+
 pub struct FetchBytesResponse {
   pub bytes: Vec<u8>,
   pub content_type: Option<reqwest::header::HeaderValue>,
