@@ -5,14 +5,14 @@ authors = ["Åke Amcoff <ake.amcoff@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 image = "0.23"
-reqwest = "0.10"
+reqwest = { version = "0.10", features = ["stream"] }
 actix-web = "2"
 actix-rt = "1"
-serde = "1.0"
+serde = "1"
 url = "2"
 futures = "0.3"
-mime = "0.3.16"
-num = "0.2.1"
+mime = "0.3"
+num = "0.2"
+custom_error = "1.7.1"
