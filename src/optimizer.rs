@@ -13,12 +13,13 @@ pub struct ResizeResponse {
 
 pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
   let start = Instant::now();
-  let resized = if width.is_none() && height.is_none() {
-    img.clone()
-  } else {
-    let nwidth = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-    let nheight = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-    img.thumbnail(nwidth, nheight)
+  let resized = match (width, height) {
+    (None, None) => img.clone(),
+    (width, height) => {
+      let nwidth = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
+      let nheight = clamp(height.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
+      img.thumbnail(nwidth, nheight)
+    }
   };
   ResizeResponse {
     img: resized,
