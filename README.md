@@ -4,11 +4,6 @@
 
 - `libssl-dev`
 
-## TODO:
-
-- Proper error handling
-- Kubernetes
-
 ## API
 
 The API is very simple, with only one endpoint at the time of writing.
