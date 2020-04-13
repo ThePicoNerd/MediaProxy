@@ -2,7 +2,6 @@ use crate::fetching;
 use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
-use mime;
 use serde::Deserialize;
 use url::Url;
 
@@ -55,6 +54,6 @@ pub async fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, Ap
 
     Ok(ApiResponse {
         bytes: imageops::to_bytes(&result.img, format)?,
-        content_type: content_type,
+        content_type,
     })
 }

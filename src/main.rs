@@ -9,7 +9,7 @@ mod performance;
 
 #[get("/")]
 async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
-    return match optimizer::handle_query(query.into_inner()).await {
+    match optimizer::handle_query(query.into_inner()).await {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
             .body(result.bytes),
@@ -32,12 +32,12 @@ async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
             };
             HttpResponse::build(status).body(body)
         }
-    };
+    }
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    let address = std::env::var("ADDRESS").unwrap_or(String::from("127.0.0.1:8080"));
+    let address = std::env::var("ADDRESS").unwrap_or_else(|_| String::from("127.0.0.1:8080"));
     println!("Binding {}", address);
     HttpServer::new(|| App::new().service(index))
         .bind(address)?

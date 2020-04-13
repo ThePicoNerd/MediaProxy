@@ -42,7 +42,7 @@ async fn fetch_bytes(url: Url) -> FetchResult<FetchBytesResponse> {
     let bytes = res.bytes().await?.to_vec();
 
     Ok(FetchBytesResponse {
-        bytes: bytes,
+        bytes,
         performance: Performance {
             elapsed_ns: start.elapsed().as_nanos(),
         },
@@ -59,7 +59,7 @@ pub async fn fetch_dynimage(url: Url) -> FetchResult<FetchDynamicImageResponse> 
     let response = fetch_bytes(url).await?;
     let img = image::load_from_memory(&response.bytes)?;
     Ok(FetchDynamicImageResponse {
-        img: img,
+        img,
         performance: Performance {
             elapsed_ns: start.elapsed().as_nanos(),
         },
