@@ -22,9 +22,7 @@ async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
                         _ => "Could not fetch source image!",
                     },
                 ),
-                ApiError::InputError { source: _ } => {
-                    (StatusCode::BAD_REQUEST, "The input is malformed.")
-                }
+                ApiError::InputError { .. } => (StatusCode::BAD_REQUEST, "The input is malformed."),
                 _ => (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "An unknown error occurred.",
