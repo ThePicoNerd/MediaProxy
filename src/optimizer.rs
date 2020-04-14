@@ -37,6 +37,7 @@ pub async fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, Ap
     let mime = match &query.format {
         ImageProcessingOutput::Jpeg => mime::IMAGE_JPEG,
         ImageProcessingOutput::Png => mime::IMAGE_PNG,
+        ImageProcessingOutput::WebP => mime::IMAGE_JPEG,
         ImageProcessingOutput::Gif => mime::IMAGE_GIF,
     };
 

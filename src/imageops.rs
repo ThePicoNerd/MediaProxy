@@ -1,6 +1,8 @@
-use image::{DynamicImage, ImageOutputFormat};
+use image::{DynamicImage, GenericImageView, ImageOutputFormat};
+use libwebp_rust::WebPEncodeRGB;
 use num::clamp;
 use serde::Deserialize;
+use std::os::raw::{c_float, c_int};
 use std::time::Instant;
 
 use crate::performance::Performance;
@@ -14,6 +16,8 @@ pub enum ImageProcessingOutput {
     Jpeg,
     #[serde(rename = "png")]
     Png,
+    #[serde(rename = "webp")]
+    WebP,
     #[serde(rename = "gif")]
     Gif,
 }
@@ -41,6 +45,24 @@ pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> Re
     }
 }
 
+fn to_bytes_webp(img: &DynamicImage, quality: u16) -> Result<Vec<u8>, image::ImageError> {
+    let (width, height) = img.dimensions();
+    let stride = width * 3;
+    let mut output: *mut u8 = std::ptr::null_mut();
+    unsafe {
+        let length = WebPEncodeRGB(
+            img.to_bytes().as_slice().as_ptr(),
+            width as c_int,
+            height as c_int,
+            stride as c_int,
+            quality as c_float,
+            &mut output,
+        );
+        let vec = Vec::from_raw_parts(output, length, length);
+        Ok(vec)
+    }
+}
+
 pub fn to_bytes(
     img: &DynamicImage,
     format: ImageProcessingOutput,
@@ -55,6 +77,10 @@ pub fn to_bytes(
             let mut result: Vec<u8> = Vec::new();
             img.write_to(&mut result, ImageOutputFormat::Png)?;
             Ok(result)
+        }
+        ImageProcessingOutput::WebP => {
+            let bytes = to_bytes_webp(img, 80)?;
+            Ok(bytes)
         }
         ImageProcessingOutput::Gif => {
             let mut result: Vec<u8> = Vec::new();
