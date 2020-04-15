@@ -3,8 +3,8 @@ use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
 use serde::Deserialize;
-use url::Url;
 use std::str::FromStr;
+use url::Url;
 
 use imageops::ImageProcessingOutput;
 

@@ -7,7 +7,6 @@ mod imageops;
 mod optimizer;
 mod performance;
 
-
 #[get("/")]
 async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
     match optimizer::handle_query(query.into_inner()).await {
