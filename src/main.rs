@@ -8,8 +8,8 @@ mod optimizer;
 mod performance;
 
 #[get("/")]
-async fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
-    match optimizer::handle_query(query.into_inner()).await {
+fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
+    match optimizer::handle_query(query.into_inner()) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
             .body(result.bytes),

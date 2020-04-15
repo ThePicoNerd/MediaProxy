@@ -29,9 +29,9 @@ pub struct ApiResponse {
     pub content_type: ContentType,
 }
 
-pub async fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, ApiError> {
+pub fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, ApiError> {
     let url = Url::parse(query.source.as_str())?;
-    let original = fetching::fetch_dynimage(url).await?;
+    let original = fetching::fetch_dynimage(url)?;
 
     let result = imageops::resize(&original.img, query.width, query.height);
 

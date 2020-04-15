@@ -21,10 +21,10 @@ custom_error! {pub FetchError
 
 pub type FetchResult<T> = Result<T, FetchError>;
 
-async fn fetch_bytes(url: Url) -> FetchResult<FetchBytesResponse> {
+fn fetch_bytes(url: Url) -> FetchResult<FetchBytesResponse> {
     let start = Instant::now();
     let url_str = url.into_string();
-    let res = reqwest::get(&url_str).await?;
+    let res = reqwest::blocking::get(&url_str)?;
 
     let body_size = match res.content_length() {
         Some(x) => x,
@@ -39,7 +39,7 @@ async fn fetch_bytes(url: Url) -> FetchResult<FetchBytesResponse> {
         return Err(FetchError::MaxSizeExceeded);
     }
 
-    let bytes = res.bytes().await?.to_vec();
+    let bytes = res.bytes()?.to_vec();
 
     Ok(FetchBytesResponse {
         bytes,
@@ -54,9 +54,9 @@ pub struct FetchDynamicImageResponse {
     pub performance: Performance,
 }
 
-pub async fn fetch_dynimage(url: Url) -> FetchResult<FetchDynamicImageResponse> {
+pub fn fetch_dynimage(url: Url) -> FetchResult<FetchDynamicImageResponse> {
     let start = Instant::now();
-    let response = fetch_bytes(url).await?;
+    let response = fetch_bytes(url)?;
     let img = image::load_from_memory(&response.bytes)?;
     Ok(FetchDynamicImageResponse {
         img,
