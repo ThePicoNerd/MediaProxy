@@ -2,7 +2,7 @@
 
 ![](https://github.com/ThePicoNerd/MediaProxy/workflows/CI/badge.svg)
 
-## Dependencies
+## Requirements
 
 - `libssl-dev`
 
@@ -17,4 +17,4 @@ The API is very simple, with only one endpoint at the time of writing.
 | width?  | integer | width of the new image                                          |
 | height? | integer | height of the new image                                         |
 | source  | url     | URL of the original image                                       |
-| format  | enum    | output format of the new image (one of `png`, `jpeg` and `gif`) |
+| format  | enum    | output format of the new image (one of `png`, `jpeg`, `webp` and `gif`) |
