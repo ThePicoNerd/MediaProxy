@@ -1,6 +1,6 @@
 # Media Proxy
 
-![](https://github.com/ThePicoNerd/MediaProxy/workflows/CI/badge.svg)
+![CI](https://github.com/ThePicoNerd/MediaProxy/workflows/CI/badge.svg)
 
 ## Requirements
 
@@ -12,9 +12,9 @@ The API is very simple, with only one endpoint at the time of writing.
 
 ### `GET /`
 
-| Field   | Type    | Description                                                     |
-| ------- | ------- | --------------------------------------------------------------- |
-| width?  | integer | width of the new image                                          |
-| height? | integer | height of the new image                                         |
-| source  | url     | URL of the original image                                       |
+| Field   | Type    | Description                                                             |
+| ------- | ------- | ----------------------------------------------------------------------- |
+| width?  | integer | width of the new image                                                  |
+| height? | integer | height of the new image                                                 |
+| source  | url     | URL of the original image                                               |
 | format  | enum    | output format of the new image (one of `png`, `jpeg`, `webp` and `gif`) |
