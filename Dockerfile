@@ -1,7 +1,5 @@
 FROM ekidd/rust-musl-builder AS builder
-# INSTALL WEBP
 RUN sudo apt-get update -y
-RUN sudo apt-get install -y libwebp-dev libclang-dev clang
 RUN USER=rust:rust cargo init . --name mediaproxy
 COPY --chown=rust:rust Cargo.* ./
 RUN cargo build --release
@@ -10,7 +8,7 @@ COPY --chown=rust:rust ./src ./src
 RUN cargo build --release
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates libwebp-dev clang-dev clang
+RUN apk --no-cache add ca-certificates
 COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/mediaproxy /usr/local/bin/
 ENV ADDRESS 0.0.0.0:80
 CMD /usr/local/bin/mediaproxy

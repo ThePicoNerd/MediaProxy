@@ -1,5 +1,5 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
-use libwebp_rust::WebPEncodeRGB;
+use libwebp_sys::WebPEncodeRGB;
 use num::clamp;
 use serde::Deserialize;
 use std::os::raw::{c_float, c_int};
