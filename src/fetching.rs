@@ -65,3 +65,26 @@ pub fn fetch_dynimage(url: Url) -> FetchResult<FetchDynamicImageResponse> {
         },
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn filesize_limit() {
+        let very_large_file =
+            "https://spacetelescope.org/static/archives/images/original/opo0328a.tif";
+        let result = fetch_bytes(Url::parse(very_large_file).unwrap()); // This file is roughly 170 MiB, way above the 32 MiB limit.
+        assert!(result.is_err(), "you shouldn't be able to download files above 32 MiB (or have we changed the file size limit?)")
+    }
+
+    #[test]
+    fn invalid_input() {
+        let invalid_file = "https://httpbin.org/get";
+        let result = fetch_dynimage(Url::parse(invalid_file).unwrap());
+        assert!(
+            result.is_err(),
+            "the image crate shouldn't accept JSON as a valid image format ..."
+        )
+    }
+}
