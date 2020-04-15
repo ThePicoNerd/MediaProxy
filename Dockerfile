@@ -1,4 +1,5 @@
 FROM ekidd/rust-musl-builder AS builder
+RUN sudo apt-get update -y
 RUN USER=rust:rust cargo init . --name mediaproxy
 COPY --chown=rust:rust Cargo.* ./
 RUN cargo build --release

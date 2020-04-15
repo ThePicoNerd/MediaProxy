@@ -4,17 +4,9 @@ use actix_web::http::header::ContentType;
 use custom_error::custom_error;
 use serde::Deserialize;
 use url::Url;
+use std::str::FromStr;
 
-#[derive(Deserialize)]
-enum ImageProcessingOutput {
-    #[serde(rename = "jpeg")]
-    #[serde(alias = "jpg")]
-    Jpeg,
-    #[serde(rename = "png")]
-    Png,
-    #[serde(rename = "gif")]
-    Gif,
-}
+use imageops::ImageProcessingOutput;
 
 #[derive(Deserialize)]
 pub struct ImageProcessingQuery {
@@ -43,17 +35,15 @@ pub async fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, Ap
 
     let result = imageops::resize(&original.img, query.width, query.height);
 
-    let (format, content_type) = match &query.format {
-        ImageProcessingOutput::Jpeg => (
-            image::ImageOutputFormat::Jpeg(80),
-            ContentType(mime::IMAGE_JPEG),
-        ),
-        ImageProcessingOutput::Png => (image::ImageOutputFormat::Png, ContentType(mime::IMAGE_PNG)),
-        ImageProcessingOutput::Gif => (image::ImageOutputFormat::Gif, ContentType(mime::IMAGE_GIF)),
+    let media_type = match &query.format {
+        ImageProcessingOutput::Jpeg => mime::IMAGE_JPEG,
+        ImageProcessingOutput::Png => mime::IMAGE_PNG,
+        ImageProcessingOutput::WebP => mime::Mime::from_str("image/webp").unwrap(),
+        ImageProcessingOutput::Gif => mime::IMAGE_GIF,
     };
 
     Ok(ApiResponse {
-        bytes: imageops::to_bytes(&result.img, format)?,
-        content_type,
+        bytes: imageops::to_bytes(&result.img, query.format)?,
+        content_type: ContentType(media_type),
     })
 }
