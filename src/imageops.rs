@@ -1,7 +1,7 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
 use libwebp_sys::WebPEncodeRGB;
 use num::clamp;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::os::raw::{c_float, c_int};
 use std::time::Instant;
 
@@ -9,7 +9,7 @@ use crate::performance::Performance;
 
 pub const MAX_IMAGE_SIZE: u32 = 2 << 11; // 4096
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub enum ImageProcessingOutput {
     #[serde(rename = "jpeg")]
     #[serde(alias = "jpg")]

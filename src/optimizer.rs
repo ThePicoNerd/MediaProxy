@@ -2,13 +2,13 @@ use crate::fetching;
 use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::str::FromStr;
 use url::Url;
 
 use imageops::ImageProcessingOutput;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct ImageProcessingQuery {
     pub source: String,
     #[serde(alias = "w")]
