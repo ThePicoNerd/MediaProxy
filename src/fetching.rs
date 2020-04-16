@@ -79,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn invalid_input() {
+    fn invalid_file_input() {
         let invalid_file = "https://httpbin.org/get";
         let result = fetch_dynimage(Url::parse(invalid_file).unwrap());
         assert!(
