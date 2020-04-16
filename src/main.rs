@@ -27,7 +27,6 @@ fn mediaproxy(query: web::Json<ImageProcessingQuery>) -> HttpResponse {
                     "An unknown error occurred.",
                 ),
             };
-            println!("{}", body);
             HttpResponse::build(status).body(body)
         }
     }
