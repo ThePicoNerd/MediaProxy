@@ -29,8 +29,8 @@ pub struct ResizeResponse {
 
 pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
     let start = Instant::now();
-    let nwidth = clamp(width.unwrap_or(img.width()), 1, MAX_IMAGE_SIZE);
-    let nheight = clamp(height.unwrap_or(img.height()), 1, MAX_IMAGE_SIZE);
+    let nwidth = clamp(width.unwrap_or_else(|| img.width()), 1, MAX_IMAGE_SIZE);
+    let nheight = clamp(height.unwrap_or_else(|| img.height()), 1, MAX_IMAGE_SIZE);
     let resized = img.thumbnail(nwidth, nheight);
     ResizeResponse {
         img: resized,
