@@ -1,7 +1,7 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
 use libwebp_sys::WebPEncodeRGB;
 use num::clamp;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::os::raw::{c_float, c_int};
 use std::time::Instant;
 
@@ -9,7 +9,7 @@ use crate::performance::Performance;
 
 pub const MAX_IMAGE_SIZE: u32 = 2 << 11; // 4096
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub enum ImageProcessingOutput {
     #[serde(rename = "jpeg")]
     #[serde(alias = "jpg")]
@@ -29,14 +29,9 @@ pub struct ResizeResponse {
 
 pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
     let start = Instant::now();
-    let resized = match (width, height) {
-        (None, None) => img.clone(),
-        (width, height) => {
-            let nwidth = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-            let nheight = clamp(height.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-            img.thumbnail(nwidth, nheight)
-        }
-    };
+    let nwidth = clamp(width.unwrap_or(img.width()), 1, MAX_IMAGE_SIZE);
+    let nheight = clamp(height.unwrap_or(img.height()), 1, MAX_IMAGE_SIZE);
+    let resized = img.thumbnail(nwidth, nheight);
     ResizeResponse {
         img: resized,
         performance: Performance {

@@ -2,20 +2,20 @@ use crate::fetching;
 use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use std::str::FromStr;
 use url::Url;
 
 use imageops::ImageProcessingOutput;
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct ImageProcessingQuery {
-    source: String,
+    pub source: String,
     #[serde(alias = "w")]
-    width: Option<u32>,
+    pub width: Option<u32>,
     #[serde(alias = "h")]
-    height: Option<u32>,
-    format: ImageProcessingOutput,
+    pub height: Option<u32>,
+    pub format: ImageProcessingOutput,
 }
 
 custom_error! {pub ApiError

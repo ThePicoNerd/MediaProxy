@@ -1,5 +1,5 @@
 use actix_web::http::StatusCode;
-use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use optimizer::{ApiError, ImageProcessingQuery};
 
 mod fetching;
@@ -7,8 +7,7 @@ mod imageops;
 mod optimizer;
 mod performance;
 
-#[get("/")]
-fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
+fn mediaproxy(query: web::Json<ImageProcessingQuery>) -> HttpResponse {
     match optimizer::handle_query(query.into_inner()) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
@@ -28,6 +27,7 @@ fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
                     "An unknown error occurred.",
                 ),
             };
+            println!("{}", body);
             HttpResponse::build(status).body(body)
         }
     }
@@ -37,8 +37,46 @@ fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
 async fn main() -> std::io::Result<()> {
     let address = std::env::var("ADDRESS").unwrap_or_else(|_| String::from("127.0.0.1:8080"));
     println!("Binding {}", address);
-    HttpServer::new(|| App::new().service(index))
-        .bind(address)?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Logger::default())
+            .data(web::JsonConfig::default().limit(4096))
+            .service(web::resource("/").route(web::post().to(mediaproxy)))
+    })
+    .bind(address)?
+    .run()
+    .await
 }
+
+// use actix_web::{
+//     middleware, web, App, HttpResponse, HttpServer,
+// };
+// use serde::{Deserialize, Serialize};
+
+// #[derive(Debug, Serialize, Deserialize)]
+// struct MyObj {
+//     name: String,
+//     number: i32,
+// }
+
+// /// This handler uses json extractor
+// async fn index(item: web::Json<MyObj>) -> HttpResponse {
+//     println!("model: {:?}", &item);
+//     HttpResponse::Ok().json(item.0) // <- send response
+// }
+
+// #[actix_rt::main]
+// async fn main() -> std::io::Result<()> {
+//     std::env::set_var("RUST_LOG", "actix_web=info");
+
+//     HttpServer::new(|| {
+//         App::new()
+//             // enable logger
+//             .wrap(middleware::Logger::default())
+//             .data(web::JsonConfig::default().limit(4096)) // <- limit size of the payload (global configuration)
+//             .service(web::resource("/").route(web::post().to(index)))
+//     })
+//     .bind("127.0.0.1:8080")?
+//     .run()
+//     .await
+// }
