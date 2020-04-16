@@ -2,7 +2,7 @@ use crate::fetching;
 use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use url::Url;
 
