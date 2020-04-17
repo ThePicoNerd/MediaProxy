@@ -10,9 +10,7 @@ use imageops::ImageProcessingOutput;
 #[derive(Deserialize)]
 pub struct ImageProcessingQuery {
     pub source: String,
-    #[serde(alias = "w")]
     pub width: Option<u32>,
-    #[serde(alias = "h")]
     pub height: Option<u32>,
     pub format: ImageProcessingOutput,
 }
