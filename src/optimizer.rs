@@ -3,7 +3,6 @@ use crate::imageops;
 use actix_web::http::header::ContentType;
 use custom_error::custom_error;
 use serde::Deserialize;
-use std::str::FromStr;
 use url::Url;
 
 use imageops::ImageProcessingOutput;
@@ -35,12 +34,7 @@ pub fn handle_query(query: ImageProcessingQuery) -> Result<ApiResponse, ApiError
 
     let result = imageops::resize(&original.img, query.width, query.height);
 
-    let media_type = match &query.format {
-        ImageProcessingOutput::Jpeg => mime::IMAGE_JPEG,
-        ImageProcessingOutput::Png => mime::IMAGE_PNG,
-        ImageProcessingOutput::WebP => mime::Mime::from_str("image/webp").unwrap(),
-        ImageProcessingOutput::Gif => mime::IMAGE_GIF,
-    };
+    let media_type = imageops::media_type(&query.format);
 
     Ok(ApiResponse {
         bytes: imageops::to_bytes(&result.img, query.format)?,
