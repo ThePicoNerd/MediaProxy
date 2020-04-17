@@ -10,7 +10,9 @@
 
 The API is very simple, with only one endpoint at the time of writing.
 
-### `GET /`
+### `POST /`
+
+**JSON parameters**
 
 | Field   | Type    | Description                                                             |
 | ------- | ------- | ----------------------------------------------------------------------- |

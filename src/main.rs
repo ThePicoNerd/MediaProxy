@@ -1,5 +1,8 @@
+#![feature(or_patterns)]
+#![feature(ip)]
+
 use actix_web::http::StatusCode;
-use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use optimizer::{ApiError, ImageProcessingQuery};
 
 mod fetching;
@@ -7,8 +10,7 @@ mod imageops;
 mod optimizer;
 mod performance;
 
-#[get("/")]
-fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
+fn mediaproxy(query: web::Json<ImageProcessingQuery>) -> HttpResponse {
     match optimizer::handle_query(query.into_inner()) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
@@ -37,8 +39,13 @@ fn index(query: web::Query<ImageProcessingQuery>) -> HttpResponse {
 async fn main() -> std::io::Result<()> {
     let address = std::env::var("ADDRESS").unwrap_or_else(|_| String::from("127.0.0.1:8080"));
     println!("Binding {}", address);
-    HttpServer::new(|| App::new().service(index))
-        .bind(address)?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Logger::default())
+            .data(web::JsonConfig::default().limit(4096))
+            .service(web::resource("/").route(web::post().to(mediaproxy)))
+    })
+    .bind(address)?
+    .run()
+    .await
 }

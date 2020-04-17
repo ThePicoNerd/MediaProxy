@@ -3,6 +3,7 @@ use libwebp_sys::WebPEncodeRGB;
 use num::clamp;
 use serde::Deserialize;
 use std::os::raw::{c_float, c_int};
+use std::str::FromStr;
 use std::time::Instant;
 
 use crate::performance::Performance;
@@ -29,14 +30,9 @@ pub struct ResizeResponse {
 
 pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
     let start = Instant::now();
-    let resized = match (width, height) {
-        (None, None) => img.clone(),
-        (width, height) => {
-            let nwidth = clamp(width.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-            let nheight = clamp(height.unwrap_or(MAX_IMAGE_SIZE), 1, MAX_IMAGE_SIZE);
-            img.thumbnail(nwidth, nheight)
-        }
-    };
+    let nwidth = clamp(width.unwrap_or_else(|| img.width()), 1, MAX_IMAGE_SIZE);
+    let nheight = clamp(height.unwrap_or_else(|| img.height()), 1, MAX_IMAGE_SIZE);
+    let resized = img.thumbnail(nwidth, nheight);
     ResizeResponse {
         img: resized,
         performance: Performance {
@@ -87,5 +83,14 @@ pub fn to_bytes(
             img.write_to(&mut result, ImageOutputFormat::Gif)?;
             Ok(result)
         }
+    }
+}
+
+pub fn media_type(output: &ImageProcessingOutput) -> mime::Mime {
+    match output {
+        ImageProcessingOutput::Jpeg => mime::IMAGE_JPEG,
+        ImageProcessingOutput::Png => mime::IMAGE_PNG,
+        ImageProcessingOutput::WebP => mime::Mime::from_str("image/webp").unwrap(),
+        ImageProcessingOutput::Gif => mime::IMAGE_GIF,
     }
 }
