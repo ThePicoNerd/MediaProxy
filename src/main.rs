@@ -1,3 +1,6 @@
+#![feature(or_patterns)]
+#![feature(ip)]
+
 use actix_web::http::StatusCode;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use optimizer::{ApiError, ImageProcessingQuery};
