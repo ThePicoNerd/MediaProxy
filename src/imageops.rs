@@ -1,7 +1,7 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
 use libwebp_sys::WebPEncodeRGB;
 use num::clamp;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::os::raw::{c_float, c_int};
 use std::str::FromStr;
 use std::time::Instant;

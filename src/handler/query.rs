@@ -3,7 +3,7 @@ use crate::imageops;
 use actix_web::http::header::ContentType;
 use base64::encode_config;
 use custom_error::custom_error;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 use imageops::ImageProcessingOutput;
@@ -13,10 +13,10 @@ fn b64_config() -> base64::Config {
 }
 
 custom_error! {pub QueryFingerprintConversionError
-    JsonError{source: serde_json::Error} = "Something went wrong when (de)serializing JSON.",
-    Base64Error{source: base64::DecodeError} = "Something went wrong when decoding Base64.",
-    UnicodeError{source: std::str::Utf8Error} = "Could not convert byte array to string!"
-  }
+  JsonError{source: serde_json::Error} = "Something went wrong when (de)serializing JSON.",
+  Base64Error{source: base64::DecodeError} = "Something went wrong when decoding Base64.",
+  UnicodeError{source: std::str::Utf8Error} = "Could not convert byte array to string!"
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct Query {
@@ -75,7 +75,7 @@ mod tests {
             source: String::from("https://dummyimage.com/600x400/000/fff"),
             format: ImageProcessingOutput::Jpeg,
             width: None,
-            height: None
+            height: None,
         };
 
         assert_eq!(query.to_fingerprint(), String::from("eyJzb3VyY2UiOiJodHRwczovL2R1bW15aW1hZ2UuY29tLzYwMHg0MDAvMDAwL2ZmZiIsIndpZHRoIjpudWxsLCJoZWlnaHQiOm51bGwsImZvcm1hdCI6ImpwZWcifQ"));

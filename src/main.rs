@@ -6,13 +6,16 @@ use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use handler::handle_query;
 
 mod fetching;
-mod imageops;
 mod handler;
+mod imageops;
 mod performance;
 
 fn mediaproxy(query: web::Json<handler::Query>) -> HttpResponse {
+    let fingerprint = query.to_fingerprint();
+
     match handle_query(query.into_inner()) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
+            .set_header("x-mediaproxy-fingerprint", fingerprint)
             .set(result.content_type)
             .body(result.bytes),
         Err(error) => {
@@ -24,7 +27,9 @@ fn mediaproxy(query: web::Json<handler::Query>) -> HttpResponse {
                         _ => "Could not fetch source image!",
                     },
                 ),
-                handler::HandleQueryError::InputError { .. } => (StatusCode::BAD_REQUEST, "The input is malformed."),
+                handler::HandleQueryError::InputError { .. } => {
+                    (StatusCode::BAD_REQUEST, "The input is malformed.")
+                }
                 _ => (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "An unknown error occurred.",
