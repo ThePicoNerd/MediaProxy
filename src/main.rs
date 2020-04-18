@@ -3,28 +3,28 @@
 
 use actix_web::http::StatusCode;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
-use optimizer::{ApiError, ImageProcessingQuery};
+use handler::handle_query;
 
 mod fetching;
 mod imageops;
-mod optimizer;
+mod handler;
 mod performance;
 
-fn mediaproxy(query: web::Json<ImageProcessingQuery>) -> HttpResponse {
-    match optimizer::handle_query(query.into_inner()) {
+fn mediaproxy(query: web::Json<handler::Query>) -> HttpResponse {
+    match handle_query(query.into_inner()) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
             .body(result.bytes),
         Err(error) => {
             let (status, body) = match error {
-                ApiError::FetchError { source } => (
+                handler::HandleQueryError::FetchError { source } => (
                     StatusCode::BAD_REQUEST,
                     match source {
                         fetching::FetchError::MaxSizeExceeded => "The source image is too large.",
                         _ => "Could not fetch source image!",
                     },
                 ),
-                ApiError::InputError { .. } => (StatusCode::BAD_REQUEST, "The input is malformed."),
+                handler::HandleQueryError::InputError { .. } => (StatusCode::BAD_REQUEST, "The input is malformed."),
                 _ => (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "An unknown error occurred.",
