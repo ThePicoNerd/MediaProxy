@@ -12,20 +12,18 @@ pub fn url_is_safe(url: Url) -> bool {
 
     match (scheme, host) {
         ("http" | "https", Some(host)) => match host {
-            Host::Domain(domain) => {
-                match lookup_host(domain) {
-                    Ok(ips) => {
-                        for ip in ips {
-                            if !ip_is_safe(ip) {
-                                return false;
-                            }
+            Host::Domain(domain) => match lookup_host(domain) {
+                Ok(ips) => {
+                    for ip in ips {
+                        if !ip_is_safe(ip) {
+                            return false;
                         }
+                    }
 
-                        true
-                    },
-                    Err(_) => false
+                    true
                 }
-            }
+                Err(_) => false,
+            },
             Host::Ipv4(addr) => ip_is_safe(IpAddr::V4(addr)),
             Host::Ipv6(addr) => ip_is_safe(IpAddr::V6(addr)),
         },
@@ -51,7 +49,7 @@ mod tests {
         let good_urls = [
             "http://google.com",
             "https://lynx.agency",
-            "https://1.1.1.1"
+            "https://1.1.1.1",
         ];
 
         for bad_url in bad_urls.iter() {

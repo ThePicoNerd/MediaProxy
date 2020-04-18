@@ -84,6 +84,27 @@ mod tests {
     use super::*;
 
     #[test]
+    fn ssrf_urls() {
+        let bad_urls = [
+            "ftp://127.0.0.1",
+            "http://127.0.0.1",
+            "https://127.0.0.1",
+            "http://localhost",
+            "http://hello.local",
+            "http://wow.internal",
+        ];
+        let good_urls = ["http://google.com", "https://lynx.agency"];
+
+        for bad_url in bad_urls.iter() {
+            assert_eq!(url_is_safe(Url::parse(bad_url).unwrap()), false);
+        }
+
+        for good_url in good_urls.iter() {
+            assert_eq!(url_is_safe(Url::parse(good_url).unwrap()), true);
+        }
+    }
+
+    #[test]
     fn filesize_limit() {
         let very_large_file =
             "https://spacetelescope.org/static/archives/images/original/opo0328a.tif";
