@@ -1,16 +1,16 @@
 use crate::performance::Performance;
-use addr::DomainName;
 use custom_error::custom_error;
 use reqwest::blocking::Client;
 use reqwest::redirect;
-use std::str::FromStr;
 use std::time::Instant;
-use url::{Host, Url};
+use url::Url;
+
+use super::validation::url_is_safe;
 
 /// The maximum allowed file size of the source image.
 pub const MAX_INPUT_SIZE: u64 = 2 << 25; // About 32 MiB.
 
-pub struct FetchBytesResponse {
+struct FetchBytesResponse {
     pub bytes: Vec<u8>,
     pub performance: Performance,
 }
@@ -24,29 +24,6 @@ custom_error! {pub FetchError
 }
 
 pub type FetchResult<T> = Result<T, FetchError>;
-
-fn url_is_safe(url: Url) -> bool {
-    let scheme = url.scheme();
-    let host = url.host();
-
-    println!("Scheme: {}", scheme);
-
-    match (scheme, host) {
-        ("http" | "https", Some(host)) => match host {
-            Host::Domain(domain) => {
-                let result = DomainName::from_str(domain);
-
-                match result {
-                    Ok(domain) => domain.root().suffix().is_known(),
-                    Err(_) => false,
-                }
-            }
-            Host::Ipv4(addr) => addr.is_global(),
-            Host::Ipv6(addr) => addr.is_global(),
-        },
-        _ => false,
-    }
-}
 
 fn fetch_bytes(url: Url) -> FetchResult<FetchBytesResponse> {
     let start = Instant::now();
