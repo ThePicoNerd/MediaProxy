@@ -31,13 +31,6 @@ impl Query {
         let json = serde_json::to_string(&self).unwrap();
         encode_config(json, b64_config())
     }
-
-    pub fn from_fingerprint(fingerprint: String) -> Result<Query, QueryFingerprintConversionError> {
-        let bytes = base64::decode_config(fingerprint, b64_config())?;
-        let json = std::str::from_utf8(&bytes)?;
-        let query: Query = serde_json::from_str(json)?;
-        Ok(query)
-    }
 }
 
 custom_error! {pub HandleQueryError
@@ -79,19 +72,5 @@ mod tests {
         };
 
         assert_eq!(query.to_fingerprint(), String::from("eyJzb3VyY2UiOiJodHRwczovL2R1bW15aW1hZ2UuY29tLzYwMHg0MDAvMDAwL2ZmZiIsIndpZHRoIjpudWxsLCJoZWlnaHQiOm51bGwsImZvcm1hdCI6ImpwZWcifQ"));
-    }
-
-    #[test]
-    fn fingerprint_to_query() {
-        let fingerprint = String::from("eyJzb3VyY2UiOiJodHRwczovL2R1bW15aW1hZ2UuY29tLzYwMHg0MDAvMDAwL2ZmZiIsIndpZHRoIjpudWxsLCJoZWlnaHQiOm51bGwsImZvcm1hdCI6ImpwZWcifQ");
-        let query = Query::from_fingerprint(fingerprint).unwrap();
-        assert_eq!(query.source, "https://dummyimage.com/600x400/000/fff");
-    }
-
-    #[test]
-    fn invalid_fingerprint() {
-        let fingerprint = String::from("bruh"); // Perfectly fine base 64, not so fine JSON.
-        let query = Query::from_fingerprint(fingerprint);
-        assert_eq!(query.is_err(), true);
     }
 }
