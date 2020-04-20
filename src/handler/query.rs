@@ -50,10 +50,10 @@ pub fn handle_query(query: Query) -> Result<Response, HandleQueryError> {
 
     let result = imageops::resize(&original.img, query.width, query.height);
 
-    let media_type = imageops::media_type(&query.format);
+    let media_type = imageops::get_media_type(&query.format);
 
     Ok(Response {
-        bytes: imageops::to_bytes(&result.img, query.format)?,
+        bytes: imageops::to_bytes::image(&result.img, query.format)?,
         content_type: ContentType(media_type),
     })
 }
