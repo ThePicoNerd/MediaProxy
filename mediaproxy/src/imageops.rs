@@ -1,7 +1,7 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
 use libwebp_sys::WebPEncodeRGB;
+use mediaproxy_lib::query::ImageProcessingOutput;
 use num::clamp;
-use serde::{Deserialize, Serialize};
 use std::os::raw::{c_float, c_int};
 use std::str::FromStr;
 use std::time::Instant;
@@ -9,19 +9,6 @@ use std::time::Instant;
 use crate::performance::Performance;
 
 pub const MAX_IMAGE_SIZE: u32 = 2 << 11; // 4096
-
-#[derive(Serialize, Deserialize)]
-pub enum ImageProcessingOutput {
-    #[serde(rename = "jpeg")]
-    #[serde(alias = "jpg")]
-    Jpeg,
-    #[serde(rename = "png")]
-    Png,
-    #[serde(rename = "webp")]
-    WebP,
-    #[serde(rename = "gif")]
-    Gif,
-}
 
 pub struct ResizeResponse {
     pub img: DynamicImage,

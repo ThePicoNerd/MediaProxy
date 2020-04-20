@@ -1,12 +1,19 @@
-version: "3"
+version: "3.4"
 services:
   nginx:
     image: nginx:1-alpine
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
-    ports:
-      - "80:80"
   mediaproxy:
-    build: .
+    build:
+      context: .
+      target: mediaproxy
     expose:
       - "80"
+  mediaproxy-router:
+    build:
+      context: .
+      target: mediaproxy-router
+    command: --forward nginx:80
+    ports:
+      - "80:80"
