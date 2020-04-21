@@ -1,12 +1,19 @@
-use crate::fetching;
-use crate::imageops;
-use actix_web::http::header::ContentType;
 use base64::encode_config;
 use custom_error::custom_error;
 use serde::{Deserialize, Serialize};
-use url::Url;
 
-use imageops::ImageProcessingOutput;
+#[derive(Serialize, Deserialize)]
+pub enum ImageProcessingOutput {
+    #[serde(rename = "jpeg")]
+    #[serde(alias = "jpg")]
+    Jpeg,
+    #[serde(rename = "png")]
+    Png,
+    #[serde(rename = "webp")]
+    WebP,
+    #[serde(rename = "gif")]
+    Gif,
+}
 
 fn b64_config() -> base64::Config {
     base64::Config::new(base64::CharacterSet::UrlSafe, false)
@@ -31,31 +38,13 @@ impl Query {
         let json = serde_json::to_string(&self).unwrap();
         encode_config(json, b64_config())
     }
-}
 
-custom_error! {pub HandleQueryError
-  FetchError{source: fetching::FetchError} = "Something went wrong when fetching the source image.",
-  ImageError{source: image::error::ImageError} = "Something went wrong when processing the image.",
-  InputError{source: url::ParseError} = "Invalid input!",
-}
-
-pub struct Response {
-    pub bytes: Vec<u8>,
-    pub content_type: ContentType,
-}
-
-pub fn handle_query(query: Query) -> Result<Response, HandleQueryError> {
-    let url = Url::parse(query.source.as_str())?;
-    let original = fetching::fetch_dynimage(url)?;
-
-    let result = imageops::resize(&original.img, query.width, query.height);
-
-    let media_type = imageops::media_type(&query.format);
-
-    Ok(Response {
-        bytes: imageops::to_bytes(&result.img, query.format)?,
-        content_type: ContentType(media_type),
-    })
+    pub fn from_fingerprint(fingerprint: String) -> Result<Query, QueryFingerprintConversionError> {
+        let bytes = base64::decode_config(fingerprint, b64_config())?;
+        let json = std::str::from_utf8(&bytes)?;
+        let query: Query = serde_json::from_str(json)?;
+        Ok(query)
+    }
 }
 
 #[cfg(test)]
@@ -72,5 +61,19 @@ mod tests {
         };
 
         assert_eq!(query.to_fingerprint(), String::from("eyJzb3VyY2UiOiJodHRwczovL2R1bW15aW1hZ2UuY29tLzYwMHg0MDAvMDAwL2ZmZiIsIndpZHRoIjpudWxsLCJoZWlnaHQiOm51bGwsImZvcm1hdCI6ImpwZWcifQ"));
+    }
+
+    #[test]
+    fn fingerprint_to_query() {
+        let fingerprint = String::from("eyJzb3VyY2UiOiJodHRwczovL2R1bW15aW1hZ2UuY29tLzYwMHg0MDAvMDAwL2ZmZiIsIndpZHRoIjpudWxsLCJoZWlnaHQiOm51bGwsImZvcm1hdCI6ImpwZWcifQ");
+        let query = Query::from_fingerprint(fingerprint).unwrap();
+        assert_eq!(query.source, "https://dummyimage.com/600x400/000/fff");
+    }
+
+    #[test]
+    fn invalid_fingerprint() {
+        let fingerprint = String::from("bruh"); // Perfectly fine base 64, not so fine JSON.
+        let query = Query::from_fingerprint(fingerprint);
+        assert_eq!(query.is_err(), true);
     }
 }
