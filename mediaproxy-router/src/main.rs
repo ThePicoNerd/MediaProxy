@@ -1,39 +1,31 @@
-use actix_web::client::Client;
-use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
-use mediaproxy_lib::query::Query;
+use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use clap::Arg;
+use mediaproxy_lib::query::Query;
 use url::Url;
 
-async fn cache(req: HttpRequest, query: web::Json<Query>, url: web::Data<Url>, client: web::Data<Client>) -> Result<HttpResponse, actix_web::Error> {
-    let new_url = url.get_ref().clone();
-    let json = serde_json::to_string(&query.into_inner()).unwrap();
-    let forwarded_req = client.request_from(new_url.as_str(), req.head()).no_decompress();
-    let res = forwarded_req.send_body(json).await.map_err(actix_web::Error::from)?;
-    let mut client_resp = HttpResponse::build(res.status());
+mod forwarder;
 
-    for (header_name, header_value) in
-        res.headers().iter().filter(|(h, _)| *h != "connection")
-    {
-        client_resp.header(header_name.clone(), header_value.clone());
-    }
-
-    Ok(client_resp.streaming(res))
+fn router(query: web::Json<Query>, url: web::Data<Url>) -> HttpResponse {
+    forwarder::forward(query.into_inner(), url.get_ref().clone())
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     let matches = clap::App::new("MediaProxy Router")
         .arg(
-            Arg::with_name("forward_addr").long("forward")
+            Arg::with_name("forward_addr")
+                .long("forward")
                 .takes_value(true)
                 .value_name("FWD ADDR")
                 .required(true),
         )
         .arg(
-            Arg::with_name("listen_addr").long("listen")
+            Arg::with_name("listen_addr")
+                .long("listen")
                 .takes_value(true)
                 .value_name("LISTEN ADDR")
-                .required(false).default_value("127.0.0.1:8080"),
+                .required(false)
+                .default_value("127.0.0.1:8080"),
         )
         .get_matches();
 
@@ -48,9 +40,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Logger::default())
             .data(web::JsonConfig::default().limit(4096))
-            .data(Client::new())
             .data(forward_url.clone())
-            .service(web::resource("/").route(web::post().to(cache)))
+            .service(web::resource("/").route(web::post().to(router)))
     })
     .bind(listen_addr)?
     .run()

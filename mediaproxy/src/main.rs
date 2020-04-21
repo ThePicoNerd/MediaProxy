@@ -3,17 +3,24 @@
 
 use actix_web::http::StatusCode;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
+use clap::Arg;
 use handler::handle_query;
 use mediaproxy_lib::query::Query;
-use clap::Arg;
 
 mod fetching;
 mod handler;
 mod imageops;
 mod performance;
 
-fn mediaproxy(query: web::Json<Query>) -> HttpResponse {
-    match handle_query(query.into_inner()) {
+fn mediaproxy(fingerprint: web::Path<String>) -> HttpResponse {
+    let query = match Query::from_fingerprint(fingerprint.into_inner()) {
+        Ok(query) => query,
+        Err(_) => {
+            return HttpResponse::build(StatusCode::BAD_REQUEST).body("The fingerprint is invalid!")
+        }
+    };
+
+    match handle_query(query) {
         Ok(result) => HttpResponse::build(StatusCode::OK)
             .set(result.content_type)
             .body(result.bytes),
@@ -44,18 +51,20 @@ async fn main() -> std::io::Result<()> {
     let matches = clap::App::new("MediaProxy")
         .arg(
             Arg::with_name("listen_addr")
+                .long("listen")
                 .takes_value(true)
                 .value_name("LISTEN ADDR")
-                .required(false).default_value("127.0.0.1:8080"),
+                .required(false)
+                .default_value("127.0.0.1:8080"),
         )
         .get_matches();
-        let listen_addr = matches.value_of("listen_addr").unwrap();
+    let listen_addr = matches.value_of("listen_addr").unwrap();
     println!("Binding {}", listen_addr);
     HttpServer::new(|| {
         App::new()
             .wrap(middleware::Logger::default())
             .data(web::JsonConfig::default().limit(4096))
-            .service(web::resource("/").route(web::post().to(mediaproxy)))
+            .service(web::resource("/{fingerprint}").route(web::get().to(mediaproxy)))
     })
     .bind(listen_addr)?
     .run()

@@ -11,10 +11,8 @@ COPY --chown=rust:rust mediaproxy-lib/Cargo.* mediaproxy-lib/
 
 RUN cargo build --release
 
-RUN ls target/x86_64-unknown-linux-musl
-RUN ls target/x86_64-unknown-linux-musl/release/deps
-
 RUN rm -r target/x86_64-unknown-linux-musl/release/deps/mediaproxy*
+RUN rm -r target/x86_64-unknown-linux-musl/release/deps/libmediaproxy*
 RUN rm -r mediaproxy/src mediaproxy-router/src mediaproxy-lib/src
 
 COPY --chown=rust:rust mediaproxy mediaproxy
@@ -23,12 +21,12 @@ COPY --chown=rust:rust mediaproxy-lib mediaproxy-lib
 
 RUN cargo build --release
 
+FROM alpine:latest AS mediaproxy
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/mediaproxy /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/mediaproxy", "--listen", "0.0.0.0:80"]
+
 FROM alpine:latest AS mediaproxy-router
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/mediaproxy-router /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/mediaproxy-router", "--listen", "0.0.0.0:80"]
-
-FROM alpine:latest AS mediaproxy
-RUN apk --no-cache add ca-certificates
-COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/mediaproxy /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/mediaproxy", "0.0.0.0:80"]

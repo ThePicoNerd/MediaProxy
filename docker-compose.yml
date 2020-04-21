@@ -8,8 +8,6 @@ services:
     build:
       context: .
       target: mediaproxy
-    expose:
-      - "80"
   mediaproxy-router:
     build:
       context: .
