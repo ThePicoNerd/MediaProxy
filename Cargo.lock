@@ -595,9 +595,9 @@ dependencies = [
 
 [[package]]
 name = "dns-lookup"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13988670860b076248c74e1b54444efc4f1dec70c8bb25da4b7c0024396b72bf"
+checksum = "8ea427e983abd535e5ea03dcf395b3a7ae4546f908c8c9e59cca36cf968f82ce"
 dependencies = [
  "libc",
  "socket2",
