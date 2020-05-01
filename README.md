@@ -1,5 +1,7 @@
 # Media Proxy
 
+![CI](https://github.com/ThePicoNerd/MediaProxy/workflows/CI/badge.svg)
+
 ## Requirements
 
 - `libssl-dev`
