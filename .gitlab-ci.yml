@@ -3,19 +3,19 @@ stages:
 
 test:
   stage: test
-  image: rust:nightly
+  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo test --verbose
 
 fmt:
   stage: test
-  image: rust:nightly
+  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo fmt --all -- --check
 
 clippy:
   stage: test
-  image: rust:nightly
+  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo clippy -- -D warnings
 
