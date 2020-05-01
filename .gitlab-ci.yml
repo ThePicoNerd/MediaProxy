@@ -5,7 +5,7 @@ test:
   stage: test
   image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
-    - cargo test --verbose
+    - cargo test
 
 fmt:
   stage: test
