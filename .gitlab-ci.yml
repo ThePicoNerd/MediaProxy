@@ -1,24 +1,27 @@
+image: ekidd/rust-musl-builder:nightly-2020-04-10
+
 stages:
   - test
 
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/cargo
+
 test:
   stage: test
-  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo test
 
 fmt:
   stage: test
-  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo fmt --all -- --check
 
 clippy:
   stage: test
-  image: ekidd/rust-musl-builder:nightly-2020-04-10
   script:
     - cargo clippy -- -D warnings
 
 cache:
   paths:
     - target/
+    - cargo/
