@@ -1,0 +1,24 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: rust:nightly
+  script:
+    - cargo test --verbose
+
+fmt:
+  stage: test
+  image: rust:nightly
+  script:
+    - cargo fmt --all -- --check
+
+clippy:
+  stage: test
+  image: rust:nightly
+  script:
+    - cargo clippy -- -D warnings
+
+cache:
+  paths:
+    - target/
