@@ -5,9 +5,9 @@ services:
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
   mediaproxy-server:
-    build: mediaproxy-server
+    image: thepiconerd/mediaproxy-server
   mediaproxy-router:
-    build: mediaproxy-router
+    image: thepiconerd/mediaproxy-router
     command: --forward nginx:80
     ports:
       - "80:80"

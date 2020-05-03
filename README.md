@@ -10,8 +10,8 @@ Rust library shared by other components.
 
 ## [Media Proxy Server](https://github.com/ThePicoNerd/mediaproxy-server)
 
-![](https://github.com/ThePicoNerd/mediaproxy-server/workflows/CI/badge.svg)
+![](https://github.com/ThePicoNerd/mediaproxy-server/workflows/Master%20Release/badge.svg)
 
 ## [Media Proxy Router](https://github.com/ThePiconerd/mediaproxy-router)
 
-![](https://github.com/ThePicoNerd/mediaproxy-router/workflows/CI/badge.svg)
+![](https://github.com/ThePicoNerd/mediaproxy-router/workflows/Master%20Release/badge.svg)
