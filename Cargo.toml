@@ -1,7 +1,0 @@
-[workspace]
-
-members = [
-    "mediaproxy",
-    "mediaproxy-router",
-    "mediaproxy-lib",
-]

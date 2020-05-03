@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "mediaproxy-common": "git@github.com:ThePicoNerd/mediaproxy-common.git",
+    "mediaproxy-router": "git@github.com:ThePicoNerd/mediaproxy-router.git",
+    "mediaproxy-server": "git@github.com:ThePicoNerd/mediaproxy-server.git"
+  }
+}

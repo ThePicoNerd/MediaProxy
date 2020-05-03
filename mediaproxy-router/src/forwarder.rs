@@ -1,6 +1,6 @@
 use actix_web::http::StatusCode;
 use actix_web::HttpResponse;
-use mediaproxy_lib::query::Query;
+use mediaproxy_common::query::Query;
 use url::Url;
 
 fn internal_server_error() -> HttpResponse {

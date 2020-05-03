@@ -1,1 +1,5 @@
 /target
+
+/mediaproxy-common/
+/mediaproxy-router/
+/mediaproxy-server/

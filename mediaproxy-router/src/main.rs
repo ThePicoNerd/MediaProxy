@@ -1,6 +1,6 @@
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use clap::Arg;
-use mediaproxy_lib::query::Query;
+use mediaproxy_common::query::Query;
 use url::Url;
 
 mod forwarder;

@@ -13,4 +13,4 @@ serde_json = "1.0"
 clap = "2"
 url = "2"
 reqwest = { version = "0.10", features = ["blocking"] }
-mediaproxy-lib = { path = "../mediaproxy-lib" }
+mediaproxy-common = "0.1"
