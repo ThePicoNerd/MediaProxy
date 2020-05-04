@@ -4,7 +4,7 @@
 
 ## [Media Proxy Common](https://github.com/ThePicoNerd/mediaproxy-common)
 
-![](https://github.com/ThePicoNerd/mediaproxy-common/workflows/CI/badge.svg) ![](https://meritbadge.herokuapp.com/mediaproxy-common)
+![](https://github.com/ThePicoNerd/mediaproxy-common/workflows/Master%20Release/badge.svg) ![](https://meritbadge.herokuapp.com/mediaproxy-common)
 
 Rust library shared by other components.
 
