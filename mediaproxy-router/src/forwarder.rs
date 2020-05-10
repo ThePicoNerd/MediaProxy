@@ -1,13 +1,9 @@
-use actix_web::http::StatusCode;
+use actix_web::error::ErrorInternalServerError;
 use actix_web::HttpResponse;
 use mediaproxy_common::query::Query;
 use url::Url;
 
-fn internal_server_error() -> HttpResponse {
-    HttpResponse::build(StatusCode::INTERNAL_SERVER_ERROR).body("Internal server error")
-}
-
-pub fn forward(query: Query, forward_url: Url) -> HttpResponse {
+pub fn forward(query: Query, forward_url: Url) -> actix_web::Result<HttpResponse> {
     let fingerprint = query.to_fingerprint();
 
     let mut new_url = forward_url;
@@ -15,15 +11,15 @@ pub fn forward(query: Query, forward_url: Url) -> HttpResponse {
 
     let res = match reqwest::blocking::get(new_url) {
         Ok(res) => res,
-        Err(_) => return internal_server_error(),
+        Err(error) => return Err(ErrorInternalServerError(error)),
     };
 
     let mut client_resp = HttpResponse::build(res.status());
 
     let bytes = match res.bytes() {
         Ok(bytes) => bytes,
-        Err(_) => return internal_server_error(),
+        Err(error) => return Err(ErrorInternalServerError(error)),
     };
 
-    client_resp.body(bytes)
+    Ok(client_resp.body(bytes))
 }
