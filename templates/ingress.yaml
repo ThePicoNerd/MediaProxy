@@ -34,6 +34,4 @@ spec:
             backend:
               serviceName: {{ include "router.fullname" . }}
               servicePort: {{ .Values.router.service.port }}
-          {{- end }}
-    {{- end }}
-  {{- end }}
+{{- end }}

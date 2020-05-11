@@ -21,11 +21,11 @@ server:
     port: 80
   resources:
     requests:
-      cpu: 100m
-      memory: 512Mi
+      cpu: 1
+      memory: 1Gi
     limits:
-      cpu: 100m
-      memory: 512Mi
+      cpu: 1
+      memory: 1Gi
   autoscaling:
     enabled: false
     minReplicas: 1
