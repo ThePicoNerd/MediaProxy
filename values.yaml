@@ -1,7 +1,10 @@
 ingress:
-  enabled: true
-  annotations: {}
-  host: mediaproxy.local
+  enabled: false
+  # annotations:
+  #   traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  #   traefik.ingress.kubernetes.io/router.tls: "true"
+  #   traefik.ingress.kubernetes.io/router.tls.certresolver: le-http
+  # host: mediaproxy.lynx.agency
   tls: []
 
 server:
