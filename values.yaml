@@ -1,5 +1,5 @@
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
   host: mediaproxy.local
   tls: []
@@ -9,7 +9,7 @@ server:
   image:
     repository: thepiconerd/mediaproxy-server
     pullPolicy: IfNotPresent
-    tag: "v0.1.0"
+    tag: "v0.1.1"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -40,7 +40,7 @@ router:
   image:
     repository: thepiconerd/mediaproxy-router
     pullPolicy: IfNotPresent
-    tag: "v0.1.0"
+    tag: "v0.1.4"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
