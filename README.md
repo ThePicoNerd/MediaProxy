@@ -15,3 +15,5 @@ Rust library shared by other components.
 ## [Media Proxy Router](https://github.com/ThePiconerd/mediaproxy-router)
 
 ![](https://github.com/ThePicoNerd/mediaproxy-router/workflows/Master%20Release/badge.svg)
+
+The API documentation for the complete application (including a cache server) is available at the [Media Proxy Router repository](https://github.com/ThePiconerd/mediaproxy-router).
