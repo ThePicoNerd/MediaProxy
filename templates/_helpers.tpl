@@ -33,6 +33,17 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
+{{/*
+Common labels
+*/}}
+{{- define "ingress.labels" -}}
+helm.sh/chart: {{ include "mediaproxy.chart" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.

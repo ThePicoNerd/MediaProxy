@@ -1,7 +1,10 @@
 ingress:
   enabled: false
-  annotations: {}
-  host: mediaproxy.local
+  # annotations:
+  #   traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  #   traefik.ingress.kubernetes.io/router.tls: "true"
+  #   traefik.ingress.kubernetes.io/router.tls.certresolver: le-http
+  # host: mediaproxy.lynx.agency
   tls: []
 
 server:
@@ -9,7 +12,7 @@ server:
   image:
     repository: thepiconerd/mediaproxy-server
     pullPolicy: IfNotPresent
-    tag: "v0.1.0"
+    tag: "v0.1.2"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -40,7 +43,7 @@ router:
   image:
     repository: thepiconerd/mediaproxy-router
     pullPolicy: IfNotPresent
-    tag: "v0.1.0"
+    tag: "v0.1.4"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
