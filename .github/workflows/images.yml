@@ -30,4 +30,12 @@ jobs:
       - run: yq w -i values.yaml server.image.tag ${{ steps.server.outputs.release }}
       - run: yq w -i values.yaml router.image.tag ${{ steps.router.outputs.release }}
 
-      - run: cat values.yaml
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          title: Update chart image tags
+          body: |
+            Versions:
+            - [mediaproxy-server](https://github.com/ThePicoNerd/mediaproxy-server) **${{ steps.server.outputs.release }}**
+            - [mediaproxy-router](https://github.com/ThePicoNerd/mediaproxy-server) **${{ steps.router.outputs.release }}**
+          labels: dependencies
