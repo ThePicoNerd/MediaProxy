@@ -6,13 +6,12 @@ ingress:
   #   traefik.ingress.kubernetes.io/router.tls.certresolver: le-http
   # host: mediaproxy.lynx.agency
   tls: []
-
 server:
   replicaCount: 1
   image:
     repository: thepiconerd/mediaproxy-server
     pullPolicy: IfNotPresent
-    tag: "v0.1.3"
+    tag: v0.1.3
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -37,13 +36,12 @@ server:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-
 router:
   replicaCount: 1
   image:
     repository: thepiconerd/mediaproxy-router
     pullPolicy: IfNotPresent
-    tag: "v0.1.4"
+    tag: v0.1.4
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -69,7 +67,6 @@ router:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-
 nginx:
   replicaCount: 1
   image:
