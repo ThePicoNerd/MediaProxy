@@ -23,9 +23,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: mikefarah/yq@3.3.2
-        run: yq w -i values.yaml server.image.tag ${{ steps.server.outputs.release }}
-      - uses: mikefarah/yq@3.3.2
-        run: yq w -i values.yaml router.image.tag ${{ steps.router.outputs.release }}
+      - name: Install yq
+        run: |
+          brew install yq
+
+      - run: yq w -i values.yaml server.image.tag ${{ steps.server.outputs.release }}
+      - run: yq w -i values.yaml router.image.tag ${{ steps.router.outputs.release }}
 
       - run: cat values.yaml
