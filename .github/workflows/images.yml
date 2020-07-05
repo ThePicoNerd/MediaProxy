@@ -1,0 +1,30 @@
+name: Update image tags
+
+on: repository_dispatch
+
+jobs:
+  update:
+    name: Update chart
+    runs-on: ubuntu-latest
+    steps:
+      - id: server
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: ThePicoNerd
+          repo: mediaproxy-server
+
+      - id: router
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: ThePicoNerd
+          repo: mediaproxy-router
+
+      - uses: actions/checkout@v2
+
+      - name: yq
+        uses: mikefarah/yq@3.3.2
+
+      - run: yq w -i values.yaml server.image.tag ${{ steps.server.outputs.release }}
+      - run: yq w -i values.yaml router.image.tag ${{ steps.router.outputs.release }}
+
+      - run: cat values.yaml
