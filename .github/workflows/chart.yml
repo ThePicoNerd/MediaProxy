@@ -27,7 +27,9 @@ jobs:
       #     path: ~/.kube/config
 
       - run: |
-          helm install mediaproxy . --set router.service.type=NodePort
+          helm install mediaproxy --wait . \
+            --set router.service.type=NodePort \
+            --set server.resources.requests.memory=128Mi
       
       - name: Test
-        run: kubectl get all
+        run: watch kubectl get pod
