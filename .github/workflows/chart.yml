@@ -32,4 +32,4 @@ jobs:
             --set server.resources.requests.memory=128Mi
       
       - name: Test
-        run: watch kubectl get pod
+        run: while true; do kubectl get pod;date ; sleep 5; done
