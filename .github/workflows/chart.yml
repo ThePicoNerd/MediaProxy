@@ -27,7 +27,7 @@ jobs:
       #     path: ~/.kube/config
 
       - run: |
-          helm install mediaproxy . --wait --set router.service.type=NodePort
+          helm install mediaproxy . --set router.service.type=NodePort
       
       - name: Test
         run: kubectl get all
