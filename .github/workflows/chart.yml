@@ -25,7 +25,7 @@ jobs:
           kubernetes version: v1.18.5
           github token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: WyriHaximus/github-action-helm3@v1
+      - uses: WyriHaximus/github-action-helm3@v2.0
         with:
           exec: helm install mediaproxy . --wait --set router.service.type=NodePort
       
