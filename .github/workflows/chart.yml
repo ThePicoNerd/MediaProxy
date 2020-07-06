@@ -33,4 +33,4 @@ jobs:
       
       - name: Test
         run: |
-          while true; do kubectl get svc; sleep 2; done
+          while true; do kubectl get deployment; sleep 2; done
