@@ -14,12 +14,22 @@ mkdir -p $WORKDIR
 
 echo Running tests against $1
 
+report="${WORKDIR}/REPORT.md"
+
+echo "# Results" > $report
+
 declare -a formats=("jpeg" "png" "webp" "gif")
 declare -a widths=("200" "400")
 declare -a heights=("400" "600")
 
 for format in "${formats[@]}"
 do
+  cat >> $report <<- EOM
+## $format
+|Resolution|Size|
+|----------|----|
+EOM
+
   for width in "${widths[@]}"
   do
     for height in "${heights[@]}"
@@ -29,8 +39,12 @@ do
       json=$(jq -n --arg format $format --arg width $width --arg height $height '.source="https://upload.wikimedia.org/wikipedia/commons/e/e9/Hue_alpha_falloff.png" | .format="\($format)" | .width=($width | tonumber) | .height=($height | tonumber)')
 
       output=${WORKDIR}/${filename}
-      
-      curl -d "$json" -H "Content-type: application/json" -o "$output" -s "$1"
+
+      curl -sSL "$1" -H "Content-type: application/json" -d "$json" -o "$output"
+
+      filesize=$(stat -c "%s" "$output" | numfmt --to=iec-i)
+
+      printf "|\`${width}\`×\`${height}\`|\`$filesize\`|\n" >> $report
 
       echo $output
     done
