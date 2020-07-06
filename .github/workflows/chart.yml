@@ -45,6 +45,8 @@ jobs:
       - name: Run tests
         run: |
           bash test/test.sh ${{ env.MEDIAPROXY_ENDPOINT }}
+          ls test
+          ls test/result
 
       - uses: actions/upload-artifact@v2
         with:
