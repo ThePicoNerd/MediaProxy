@@ -18,12 +18,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v1.1.0
-        with:
-          minikube version: v1.11.0
-          kubernetes version: v1.18.5
-          github token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: engineerd/setup-kind@v0.4.0
+      - uses: azure/setup-helm@v1
+      - name: Install yq
+        run: |
+          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
-      - name: Test
-        run: kubectl get nodes
+      # - uses: pCYSl5EDgo/cat@master
+      #   id: kubeconfig
+      #   with:
+      #     path: ~/.kube/config
+
+      - run: |
+          helm install mediaproxy . --wait \
+            --set router.service.type=NodePort \
+            --set server.resources.requests.cpu=512m \
+            --set server.resources.requests.memory=512Mi \
+            --set server.resources.limits.cpu=512m \
+            --set server.resources.limits.memory=512Mi \
+
+      - name: Get router port
+        run: |
+          echo ::set-env name=MEDIAPROXY_ENDPOINT::http://$(kubectl get node kind-control-plane -o yaml | yq r - status.addresses[0].address):$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports[0].nodePort )
+
+      - name: Run tests
+        run: |
+          curl -i ${{ env.MEDIAPROXY_ENDPOINT }}
+          bash test/test.sh ${{ env.MEDIAPROXY_ENDPOINT }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: result
+          path: test/result
