@@ -27,7 +27,7 @@ jobs:
       #     path: ~/.kube/config
 
       - run: |
-          helm install mediaproxy --wait . \
+          helm install mediaproxy . \
             --set router.service.type=NodePort \
             --set server.resources.requests.memory=128Mi
       
