@@ -33,6 +33,4 @@ jobs:
       
       - name: Test
         run: |
-          sleep 5
-          kubectl get pod
-          while true; do kubectl logs "-l=app.kubernetes.io/name=mediaproxy-server"; sleep 2; done
+          while true; do kubectl get pod; sleep 2; done
