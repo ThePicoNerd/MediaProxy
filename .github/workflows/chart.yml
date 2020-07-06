@@ -29,10 +29,10 @@ jobs:
       - run: |
           helm install mediaproxy . \
             --set router.service.type=NodePort \
-            --set server.resources.requests.cpu=512m
-            --set server.resources.requests.memory=512Mi
-            --set server.resources.limits.cpu=512m
-            --set server.resources.limits.memory=512Mi
+            --set server.resources.requests.cpu=512m \
+            --set server.resources.requests.memory=512Mi \
+            --set server.resources.limits.cpu=512m \
+            --set server.resources.limits.memory=512Mi \
       
       - name: Test
         run: |
