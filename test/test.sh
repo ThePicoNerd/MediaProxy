@@ -30,7 +30,7 @@ do
       
       curl -d "$json" -H "Content-type: application/json" -o "$output" -s "$1"
 
-      echo $filename
+      echo $output
     done
   done
 done
