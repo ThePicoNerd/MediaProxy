@@ -25,5 +25,16 @@ jobs:
           kubernetes version: v1.18.5
           github token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Deploy
+        uses: deliverybot/helm@v1
+        with:
+          release: mediaproxy
+          namespace: default
+          chart: "."
+          values: |
+            router:
+              service:
+                type: NodePort
+      
       - name: Test
-        run: kubectl get nodes
+        run: kubectl get all
