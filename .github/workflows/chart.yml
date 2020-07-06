@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: engineerd/setup-kind@v0.4.0
       - uses: azure/setup-helm@v1
+      - run: brew install yq
 
       # - uses: pCYSl5EDgo/cat@master
       #   id: kubeconfig
@@ -27,13 +28,15 @@ jobs:
       #     path: ~/.kube/config
 
       - run: |
-          helm install mediaproxy . \
+          helm install mediaproxy . --wait \
             --set router.service.type=NodePort \
             --set server.resources.requests.cpu=512m \
             --set server.resources.requests.memory=512Mi \
             --set server.resources.limits.cpu=512m \
             --set server.resources.limits.memory=512Mi \
-      
-      - name: Test
+
+      - name: Get router port
         run: |
-          while true; do kubectl get pod; sleep 2; done
+          echo ::set-env name=ROUTER_PORT::$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r -)
+
+      - run: cat ${{ env.ROUTER_PORT }}
