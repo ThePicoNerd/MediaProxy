@@ -44,11 +44,8 @@ jobs:
 
       - name: Run tests
         run: |
-          kubectl get node
-          echo ${{ env.MEDIAPROXY_ENDPOINT }}
           curl -i ${{ env.MEDIAPROXY_ENDPOINT }}
           bash test/test.sh ${{ env.MEDIAPROXY_ENDPOINT }}
-          ls /home/runner/work/mediaproxy/mediaproxy/test/result/
 
       - uses: actions/upload-artifact@v2
         with:

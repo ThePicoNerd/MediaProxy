@@ -12,6 +12,8 @@ echo Creating directory $WORKDIR
 
 mkdir -p $WORKDIR
 
+echo Running tests against $1
+
 declare -a formats=("jpeg" "png" "webp" "gif")
 declare -a widths=("200" "400")
 declare -a heights=("400" "600")
@@ -34,5 +36,3 @@ do
     done
   done
 done
-
-# echo "Testing $1"
