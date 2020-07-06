@@ -47,9 +47,20 @@ jobs:
           name: result
           path: test/result
 
-      - uses: harupy/comment-on-pr@master
+      - uses: jwalton/gh-find-current-pr@v1
         if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: find_pr
         with:
-          filename: test/result/REPORT.md
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get report body
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo ::set-env name=REPORT::$(cat test/result/REPORT.md)
+
+      - uses: peter-evans/create-or-update-comment@v1
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          issue-number: ${{ steps.find_pr.outputs.pr }}
+          edit-mode: replace
+          body: ${{ env.REPORT }}
