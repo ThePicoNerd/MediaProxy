@@ -40,7 +40,7 @@ jobs:
 
       - name: Get router port
         run: |
-          echo ::set-env name=MEDIAPROXY_ENDPOINT::http://localhost:$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports[0].nodePort )
+          echo ::set-env name=MEDIAPROXY_ENDPOINT::http://$(kubectl get node kind-control-plane -o yaml | yq r - status.addresses[0].address):$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports[0].nodePort )
 
       - name: Run tests
         run: |
