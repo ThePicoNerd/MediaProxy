@@ -20,16 +20,15 @@ jobs:
       - uses: actions/checkout@v1
       - uses: engineerd/setup-kind@v0.4.0
 
-      - name: Read kubeconfig
+      - uses: pCYSl5EDgo/cat@master
         id: kubeconfig
-        uses: juliangruber/read-file-action@v1
         with:
           path: ~/.kube/config
 
       - uses: WyriHaximus/github-action-helm3@v2.0
         with:
           exec: helm install mediaproxy . --wait --set router.service.type=NodePort
-          kubeconfig: ${{ steps.kubeconfig.outputs.content }}
+          kubeconfig: ${{ steps.kubeconfig.outputs.text }}
       
       - name: Test
         run: kubectl get all
