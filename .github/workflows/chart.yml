@@ -42,6 +42,11 @@ jobs:
         run: |
           echo ::set-env name=MEDIAPROXY_ENDPOINT::http://localhost:$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports[0].nodePort )
 
-      - run: echo ${{ env.MEDIAPROXY_ENDPOINT }}
+      - name: Run tests
+        run: |
+          bash test/test.sh
 
-      - run: curl ${{ env.MEDIAPROXY_ENDPOINT }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: result
+          path: test/result
