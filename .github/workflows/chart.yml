@@ -20,7 +20,10 @@ jobs:
       - uses: actions/checkout@v1
       - uses: engineerd/setup-kind@v0.4.0
       - uses: azure/setup-helm@v1
-      - run: brew install yq
+      - name: Install yq
+        run: |
+          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
       # - uses: pCYSl5EDgo/cat@master
       #   id: kubeconfig
@@ -37,6 +40,6 @@ jobs:
 
       - name: Get router port
         run: |
-          echo ::set-env name=ROUTER_PORT::$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r -)
+          echo ::set-env name=MEDIAPROXY_PORT::$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports.nodePort )
 
-      - run: cat ${{ env.ROUTER_PORT }}
+      - run: cat ${{ env.MEDIAPROXY_PORT }}
