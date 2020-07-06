@@ -46,8 +46,10 @@ jobs:
         run: |
           cd test
           bash test.sh ${{ env.MEDIAPROXY_ENDPOINT }}
+          ls
+          ls result
 
       - uses: actions/upload-artifact@v2
         with:
           name: result
-          path: test/result
+          path: result
