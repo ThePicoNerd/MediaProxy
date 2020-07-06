@@ -40,8 +40,7 @@ jobs:
 
       - name: Get router port
         run: |
-          kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r -
-          echo ::set-env name=MEDIAPROXY_ENDPOINT::http://localhost:$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports.nodePort )
+          echo ::set-env name=MEDIAPROXY_ENDPOINT::http://localhost:$(kubectl get svc mediaproxy-mediaproxy-router -o yaml | yq r - spec.ports[0].nodePort )
 
       - run: echo ${{ env.MEDIAPROXY_ENDPOINT }}
 
