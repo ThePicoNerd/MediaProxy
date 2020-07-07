@@ -60,7 +60,11 @@ jobs:
 
       - name: Get report body
         run: |
-          echo ::set-env name=REPORT::$(cat test/result/REPORT.md)
+          REPORT="$(cat test/result/REPORT.md)"
+          REPORT="${REPORT//'%'/'%25'}"
+          REPORT="${REPORT//$'\n'/'%0A'}"
+          REPORT="${REPORT//$'\r'/'%0D'}"
+          echo ::set-env name=REPORT::$REPORT
 
       - run: |
           cat test/result/REPORT.md
