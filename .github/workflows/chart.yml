@@ -48,18 +48,16 @@ jobs:
           path: test/result
 
       - uses: jwalton/gh-find-current-pr@v1
-        if: ${{ github.event_name == 'pull_request' }}
         id: find_pr
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get report body
-        if: ${{ github.event_name == 'pull_request' }}
         run: |
+          echo ${{ steps.find_pr.outputs.pr }}
           echo ::set-env name=REPORT::$(cat test/result/REPORT.md)
 
       - uses: peter-evans/create-or-update-comment@v1
-        if: ${{ github.event_name == 'pull_request' }}
         with:
           issue-number: ${{ steps.find_pr.outputs.pr }}
           edit-mode: replace
