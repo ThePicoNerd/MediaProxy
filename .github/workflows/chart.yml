@@ -46,3 +46,32 @@ jobs:
         with:
           name: result
           path: test/result
+
+      - uses: jwalton/gh-find-current-pr@v1
+        id: find_pr
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          echo ::set-env name=FALLBACK_PR::$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+
+      - run: |
+          echo ::set-env name=PR_ID::${{ steps.find_pr.outputs.pr || env.FALLBACK_PR }}
+
+      - name: Get report body
+        run: |
+          REPORT="$(cat test/result/REPORT.md)"
+          REPORT="${REPORT//'%'/'%25'}"
+          REPORT="${REPORT//$'\n'/'%0A'}"
+          REPORT="${REPORT//$'\r'/'%0D'}"
+          echo ::set-env name=REPORT::$REPORT
+
+      - run: |
+          cat test/result/REPORT.md
+
+      - uses: peter-evans/create-or-update-comment@v1
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          issue-number: ${{ env.PR_ID }}
+          edit-mode: replace
+          body: ${{ env.REPORT }}
