@@ -18,11 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
-      - run: |
-          echo ::set-env name=PR_ID::${{ $(steps.find_pr.outputs.pr) || $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH") }}
-      - run: echo ${{ env.PR_ID }}
-
       - uses: azure/setup-helm@v1
       - name: Install yq
         run: |
@@ -58,7 +53,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          echo ::set-env name=PR_ID::${{ $(steps.find_pr.outputs.pr) || $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH") }}
+          echo ::set-env name=FALLBACK_PR::$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+
+      - run: |
+          echo ::set-env name=PR_ID::${{ steps.find_pr.outputs.pr || env.FALLBACK_PR }}
 
       - name: Get report body
         run: |
