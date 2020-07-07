@@ -62,6 +62,9 @@ jobs:
         run: |
           echo ::set-env name=REPORT::$(cat test/result/REPORT.md)
 
+      - run: |
+          cat test/result/REPORT.md
+
       - uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ env.PR_ID }}
