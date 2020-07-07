@@ -16,7 +16,9 @@ echo Running tests against $1
 
 report="${WORKDIR}/REPORT.md"
 
-echo "# Results" > $report
+cat > $report <<- EOM
+## Test results
+EOM
 
 declare -a formats=("jpeg" "png" "webp" "gif")
 declare -a widths=("200" "400")
@@ -25,7 +27,7 @@ declare -a heights=("400" "600")
 for format in "${formats[@]}"
 do
   cat >> $report <<- EOM
-## $format
+**$format**
 |Resolution|Size|
 |----------|----|
 EOM
