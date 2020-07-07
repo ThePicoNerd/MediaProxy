@@ -27,6 +27,7 @@ declare -a heights=("400" "600")
 for format in "${formats[@]}"
 do
   cat >> $report <<- EOM
+
 **$format**
 |Resolution|Size|
 |----------|----|
